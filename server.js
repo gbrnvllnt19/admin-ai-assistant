@@ -1,41 +1,106 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const session = require("express-session");
+const crypto = require("crypto");
 
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
-
-
-// =====================================================
-// MIDDLEWARE
-// =====================================================
 
 app.use(express.json());
-
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || "secret-default",
-
-        resave: false,
-
-        saveUninitialized: false,
-
-        cookie: {
-            httpOnly: true,
-            secure: false,
-            maxAge: 24 * 60 * 60 * 1000
-        }
-    })
-);
-
-
-// =====================================================
-// FILE HTML / CSS / JS
-// =====================================================
-
 app.use(express.static(__dirname));
+
+
+// =====================================================
+// COOKIE SESSION SEDERHANA
+// =====================================================
+
+const SESSION_MAX_AGE = 24 * 60 * 60 * 1000;
+
+function buatSignature(data) {
+    return crypto
+        .createHmac("sha256", process.env.SESSION_SECRET || "secret-default")
+        .update(data)
+        .digest("hex");
+}
+
+function buatSession(username) {
+    const data = Buffer.from(
+        JSON.stringify({
+            username: username,
+            expires: Date.now() + SESSION_MAX_AGE
+        })
+    ).toString("base64url");
+
+    const signature = buatSignature(data);
+
+    return data + "." + signature;
+}
+
+function bacaCookie(req, nama) {
+    const cookieHeader = req.headers.cookie;
+
+    if (!cookieHeader) {
+        return null;
+    }
+
+    const cookies = cookieHeader.split(";");
+
+    for (const cookie of cookies) {
+        const bagian = cookie.trim().split("=");
+
+        if (bagian[0] === nama) {
+            return bagian.slice(1).join("=");
+        }
+    }
+
+    return null;
+}
+
+function cekSession(req) {
+    const token = bacaCookie(req, "admin_session");
+
+    if (!token) {
+        return null;
+    }
+
+    const bagian = token.split(".");
+
+    if (bagian.length !== 2) {
+        return null;
+    }
+
+    const data = bagian[0];
+    const signature = bagian[1];
+
+    const signatureBenar = buatSignature(data);
+
+    if (signature !== signatureBenar) {
+        return null;
+    }
+
+    try {
+        const session = JSON.parse(
+            Buffer.from(data, "base64url").toString()
+        );
+
+        if (Date.now() > session.expires) {
+            return null;
+        }
+
+        return session;
+    } catch (error) {
+        return null;
+    }
+}
+
+
+// =====================================================
+// HALAMAN UTAMA
+// =====================================================
+
+app.get("/", function (req, res) {
+    res.sendFile(__dirname + "/index.html");
+});
 
 
 // =====================================================
@@ -47,13 +112,11 @@ app.post("/api/login", function (req, res) {
     const username = req.body.username;
     const password = req.body.password;
 
-
     if (!username || !password) {
         return res.status(400).json({
             error: "Username dan password wajib diisi."
         });
     }
-
 
     if (
         username !== process.env.ADMIN_USERNAME ||
@@ -64,16 +127,27 @@ app.post("/api/login", function (req, res) {
         });
     }
 
+    const sessionToken = buatSession(username);
 
-    req.session.loggedIn = true;
-    req.session.username = username;
+    const secureCookie =
+        process.env.NODE_ENV === "production"
+            ? " Secure;"
+            : "";
 
+    res.setHeader(
+        "Set-Cookie",
+        "admin_session=" +
+        sessionToken +
+        "; HttpOnly; SameSite=Lax; Path=/; Max-Age=" +
+        Math.floor(SESSION_MAX_AGE / 1000) +
+        ";" +
+        secureCookie
+    );
 
     res.json({
         success: true,
         username: username
     });
-
 });
 
 
@@ -83,20 +157,18 @@ app.post("/api/login", function (req, res) {
 
 app.get("/api/check-login", function (req, res) {
 
-    if (req.session.loggedIn === true) {
+    const session = cekSession(req);
 
+    if (!session) {
         return res.json({
-            loggedIn: true,
-            username: req.session.username
+            loggedIn: false
         });
-
     }
 
-
     res.json({
-        loggedIn: false
+        loggedIn: true,
+        username: session.username
     });
-
 });
 
 
@@ -106,25 +178,14 @@ app.get("/api/check-login", function (req, res) {
 
 app.post("/api/logout", function (req, res) {
 
-    req.session.destroy(function (error) {
+    res.setHeader(
+        "Set-Cookie",
+        "admin_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0"
+    );
 
-        if (error) {
-
-            console.error("Logout error:", error);
-
-            return res.status(500).json({
-                error: "Gagal logout."
-            });
-
-        }
-
-
-        res.json({
-            success: true
-        });
-
+    res.json({
+        success: true
     });
-
 });
 
 
@@ -134,15 +195,17 @@ app.post("/api/logout", function (req, res) {
 
 function wajibLogin(req, res, next) {
 
-    if (req.session.loggedIn === true) {
-        return next();
+    const session = cekSession(req);
+
+    if (!session) {
+        return res.status(401).json({
+            error: "Anda harus login terlebih dahulu."
+        });
     }
 
+    req.username = session.username;
 
-    res.status(401).json({
-        error: "Anda harus login terlebih dahulu."
-    });
-
+    next();
 }
 
 
@@ -157,29 +220,20 @@ app.post(
 
         try {
 
-            // script.js mengirim "prompt"
             const prompt = req.body.prompt;
 
-
             if (!prompt) {
-
                 return res.status(400).json({
                     error: "Prompt tidak boleh kosong."
                 });
-
             }
 
-
-            // Cek API KEY
             if (!process.env.DEEPSEEK_API_KEY) {
-
                 return res.status(500).json({
                     error:
-                        "DEEPSEEK_API_KEY belum diatur di file .env."
+                        "DEEPSEEK_API_KEY belum diatur di Environment Variables."
                 });
-
             }
-
 
             const response = await fetch(
                 "https://api.deepseek.com/chat/completions",
@@ -188,7 +242,6 @@ app.post(
 
                     headers: {
                         "Content-Type": "application/json",
-
                         "Authorization":
                             "Bearer " +
                             process.env.DEEPSEEK_API_KEY
@@ -203,8 +256,7 @@ app.post(
                             {
                                 role: "system",
 
-                                content:
-                                    `
+                                content: `
 Kamu adalah AI Admin Assistant.
 
 Fokus utama kamu adalah membantu pekerjaan administrasi dan pengolahan data.
@@ -226,51 +278,36 @@ Kamu dapat membantu:
 ATURAN PENTING:
 
 1. Jangan menghapus data kosong atau tidak lengkap secara otomatis.
-
 2. Data kosong atau tidak lengkap harus tetap dipertahankan.
-
 3. Jika data perlu dirapikan, data kosong atau tidak lengkap ditempatkan di bagian paling bawah.
-
 4. Data asli harus selalu dipertahankan.
-
 5. Gunakan Bahasa Indonesia yang natural dan mudah dipahami.
-
 6. Jangan mengarang data yang tidak tersedia.
-
 7. Jika pengguna meminta perubahan data, jelaskan perubahan yang dilakukan dengan jelas.
 `
                             },
 
                             {
                                 role: "user",
-
                                 content: prompt
                             }
 
                         ],
 
                         temperature: 0.2
-
                     })
                 }
             );
 
-
             const data = await response.json();
 
-
             if (!response.ok) {
-
                 return res.status(response.status).json({
-
                     error:
                         data.error?.message ||
                         "Gagal menghubungi DeepSeek."
-
                 });
-
             }
-
 
             const hasil =
                 data.choices &&
@@ -279,13 +316,10 @@ ATURAN PENTING:
                     ? data.choices[0].message.content
                     : "AI tidak memberikan jawaban.";
 
-
-            // script.js mengharapkan "result"
             res.json({
                 success: true,
                 result: hasil
             });
-
 
         } catch (error) {
 
@@ -294,30 +328,39 @@ ATURAN PENTING:
                 error
             );
 
-
             res.status(500).json({
                 error:
                     "Terjadi kesalahan pada server AI."
             });
+        }
+    }
+);
+
+
+// =====================================================
+// EXPORT UNTUK VERCEL
+// =====================================================
+
+module.exports = app;
+
+
+// =====================================================
+// SERVER LOKAL
+// =====================================================
+
+if (require.main === module) {
+
+    const PORT = process.env.PORT || 3000;
+
+    app.listen(
+        PORT,
+        function () {
+
+            console.log(
+                "AI Admin Server berjalan di http://localhost:" +
+                PORT
+            );
 
         }
-
-    }
-);
-
-
-// =====================================================
-// SERVER
-// =====================================================
-
-app.listen(
-    PORT,
-    function () {
-
-        console.log(
-            "AI Admin Server berjalan di http://localhost:" +
-            PORT
-        );
-
-    }
-);
+    );
+}
