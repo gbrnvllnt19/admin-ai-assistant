@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>AI Admin Assistant</title>
+
+<!-- Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<link rel="stylesheet" href="style.css">
+
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
+<div id="loginPage" class="login-page">
+
+
+<div class="login-background">
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
+    <div class="grid-overlay"></div>
+</div>
+
+<div class="login-card">
+
+    <div class="login-brand">
+
+        <div class="login-logo">
+            <div class="logo-icon">AI</div>
+        </div>
+
+        <div>
+            <span class="brand-mini">PRIVATE WORKSPACE</span>
+            <h1>Admin AI</h1>
+        </div>
+
+    </div>
+
+    <div class="login-heading">
+
+        <span class="login-eyebrow">ADMIN ASSISTANT</span>
+
+        <h2>Sugeng Rawuh Cok.</h2>
+
+        <p>
+            Kelola dan rapikan data administrasi
+            dengan bantuan AI dalam satu workspace.
+        </p>
+
+    </div>
+
+    <form id="loginForm">
+
+        <div class="input-group">
+
+            <label for="username">
+                Username
+            </label>
+
+            <div class="input-wrapper">
+
+                <span class="input-icon">◎</span>
+
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Masukkan username"
+                    autocomplete="username"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+        <div class="input-group">
+
+            <label for="password">
+                Password
+            </label>
+
+            <div class="input-wrapper">
+
+                <span class="input-icon">••</span>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Masukkan password"
+                    autocomplete="current-password"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+        <button
+            type="submit"
+            class="login-btn"
+        >
+            <span>Masuk ke Workspace</span>
+            <span class="btn-arrow">→</span>
+        </button>
+
+        <p
+            id="loginMessage"
+            class="login-message"
+        ></p>
+
+    </form>
+
+    <div class="login-security">
+
+        <span class="security-dot"></span>
+
+        <div>
+            <strong>Private access</strong>
+            <span>Workspace hanya dapat diakses oleh admin.</span>
+        </div>
+
+    </div>
+
+    <div class="login-footer">
+    AI Admin Assistant
+    <span>•</span>
+    Private Workspace
+    <small>Created by Gibran Vallent Ditra</small>
+</div>
+
+
+</div>
+
+
+</div>
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
+<div id="dashboardPage" class="app hidden">
+
+
+<!-- =================================================
+     SIDEBAR
+================================================== -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-inner">
+
+        <div class="sidebar-brand">
+
+            <div class="logo-icon">
+                AI
+            </div>
+
+            <div class="logo-text">
+                <strong>Admin AI</strong>
+                <span>Assistant</span>
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-label">
+            WORKSPACE
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <button
+                class="nav-item active"
+                type="button"
+            >
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </button>
+
+            <button
+                class="nav-item"
+                type="button"
+            >
+                <span class="nav-icon">▤</span>
+                <span>Data Saya</span>
+            </button>
+
+            <button
+                class="nav-item"
+                type="button"
+            >
+                <span class="nav-icon">◷</span>
+                <span>Riwayat</span>
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-spacer"></div>
+
+
+        <div class="sidebar-ai-card">
+
+            <div class="sidebar-ai-icon">
+                ✦
+            </div>
+
+            <div>
+                <strong>AI siap membantu</strong>
+                <span>Gunakan perintah Bahasa Indonesia.</span>
+            </div>
+
+        </div>
+
+
+        <div class="system-status">
+
+            <span class="status-dot"></span>
+
+            <div>
+                <strong>Sistem online</strong>
+                <small>AI Admin aktif</small>
+            </div>
+
+        </div>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+            type="button"
+        >
+            <span>↪</span>
+            <span>Keluar</span>
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- =================================================
+     MAIN CONTENT
+================================================== -->
+
+<main class="main">
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div class="header-left">
+
+            <div class="breadcrumb">
+                Workspace
+                <span>/</span>
+                Dashboard
+            </div>
+
+            <h1>
+                Kelola data dengan lebih cepat.
+            </h1>
+
+            <p>
+                Upload data, berikan perintah,
+                dan biarkan AI membantu pekerjaan administrasi.
+            </p>
+
+        </div>
+
+
+        <div class="header-right">
+
+            <div class="ai-status">
+
+                <span class="ai-status-dot"></span>
+
+                <div>
+                    <strong>AI Ready</strong>
+                    <small>Bahasa Indonesia</small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =================================================
+         STATS
+    ================================================== -->
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-icon blue">
+                ▤
+            </div>
+
+            <div class="stat-content">
+                <span>Total Data</span>
+                <strong id="totalDataStat">0</strong>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon purple">
+                ✦
+            </div>
+
+            <div class="stat-content">
+                <span>Diproses</span>
+                <strong id="processCountStat">0</strong>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon green">
+                ✓
+            </div>
+
+            <div class="stat-content">
+                <span>Status Data</span>
+                <strong id="dataStatusStat">Siap</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         AI ASSISTANT
+    ================================================== -->
+
+    <section class="card ai-workspace">
+
+        <div class="ai-workspace-header">
+
+            <div class="ai-title-area">
+
+                <div class="ai-avatar">
+                    ✦
+                </div>
+
+                <div>
+                    <span class="section-kicker">
+                        AI ASSISTANT
+                    </span>
+
+                    <h2>
+                        Apa yang ingin kamu kerjakan?
+                    </h2>
+
+                    <p>
+                        Tulis perintah seperti biasa.
+                        AI akan membantu mengolah data yang sedang aktif.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ai-live-badge">
+                <span></span>
+                Online
+            </div>
+
+        </div>
+
+
+        <div class="command-box">
+
+            <textarea
+                id="commandInput"
+                placeholder="Contoh: Urutkan nama A-Z dan pindahkan data yang kosong ke bagian paling bawah..."
+            ></textarea>
+
+            <div class="command-toolbar">
+
+                <div class="command-hint">
+                    <span>✦</span>
+                    AI bekerja berdasarkan data terakhir
+                </div>
+
+                <span
+                    id="commandCounter"
+                    class="command-counter"
+                >
+                    0 karakter
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="command-bottom">
+
+            <div class="examples">
+
+                <span class="examples-label">
+                    Quick command
+                </span>
+
+                <button
+                    class="example-btn"
+                    type="button"
+                >
+                    Urutkan nama A-Z
+                </button>
+
+                <button
+                    class="example-btn"
+                    type="button"
+                >
+                    Cari data duplikat
+                </button>
+
+                <button
+                    class="example-btn"
+                    type="button"
+                >
+                    Rapikan tabel
+                </button>
+
+            </div>
+
+
+            <button
+                id="processBtn"
+                class="process-btn"
+                type="button"
+            >
+                <span class="process-icon">✦</span>
+                <span>Proses Data</span>
+                <span class="process-arrow">→</span>
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         UPLOAD DATA
+    ================================================== -->
+
+    <section class="card upload-card">
+
+        <div class="section-title">
+
+            <div>
+                <span class="section-kicker">
+                    DATA SOURCE
+                </span>
+
+                <h2>
+                    Upload file
+                </h2>
+
+                <p>
+                    Masukkan Excel atau CSV yang ingin kamu olah.
+                </p>
+            </div>
+
+            <span class="section-badge">
+                XLSX · XLS · CSV
+            </span>
+
+        </div>
+
+
+        <label
+            for="fileInput"
+            class="upload-box"
+        >
+
+            <div class="upload-icon">
+                ↑
+            </div>
+
+            <div class="upload-main">
+
+                <h3>
+                    Pilih file atau tarik ke sini
+                </h3>
+
+                <p>
+                    Upload data administrasi untuk memulai.
+                </p>
+
+                <div class="upload-formats">
+                    <span>XLSX</span>
+                    <span>XLS</span>
+                    <span>CSV</span>
+                </div>
+
+            </div>
+
+            <div class="upload-action">
+                Pilih file
+            </div>
+
+            <input
+                type="file"
+                id="fileInput"
+                accept=".xlsx,.xls,.csv"
+                hidden
+            >
+
+        </label>
+
+
+        <div
+            id="fileInfo"
+            class="file-info hidden"
+        ></div>
+
+    </section>
+
+
+    <!-- =================================================
+         DATA PREVIEW
+    ================================================== -->
+
+    <section class="card preview-card">
+
+        <div class="section-title">
+
+            <div>
+
+                <span class="section-kicker">
+                    DATA PREVIEW
+                </span>
+
+                <div class="preview-title-row">
+
+                    <h2>
+                        Data aktif
+                    </h2>
+
+                    <span
+                        id="dataVersionBadge"
+                        class="version-badge"
+                    >
+                        Data awal
+                    </span>
+
+                </div>
+
+                <p id="previewInfo">
+                    Belum ada data yang dimuat.
+                </p>
+
+            </div>
+
+
+            <div class="preview-actions">
+
+                <button
+                    id="undoBtn"
+                    class="secondary-btn"
+                    type="button"
+                    disabled
+                >
+                    ↶ Undo
+                </button>
+
+                <button
+                    id="redoBtn"
+                    class="secondary-btn"
+                    type="button"
+                    disabled
+                >
+                    ↷ Redo
+                </button>
+
+                <button
+                    id="downloadBtn"
+                    class="download-btn"
+                    type="button"
+                    disabled
+                >
+                    ↓ Download
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-toolbar">
+
+            <div class="table-info">
+
+                <span class="table-live-dot"></span>
+
+                <span>
+                    Data aktif
+                </span>
+
+            </div>
+
+
+            <div class="table-tools">
+
+                <button
+                    id="resetDataBtn"
+                    type="button"
+                    class="table-tool-btn"
+                >
+                    ↺ Reset
+                </button>
+
+                <button
+                    id="clearDataBtn"
+                    type="button"
+                    class="table-tool-btn danger"
+                >
+                    × Bersihkan
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-container">
+
+            <table id="dataTable">
+
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tableBody">
+
+                    <tr class="empty-row">
+
+                        <td colspan="2">
+
+                            <div class="empty-state">
+
+                                <div class="empty-icon">
+                                    ▤
+                                </div>
+
+                                <h3>
+                                    Belum ada data
+                                </h3>
+
+                                <p>
+                                    Upload Excel atau CSV
+                                    untuk melihat data di sini.
+                                </p>
+
+                                <span>
+                                    Data asli tidak diubah.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div class="preview-footer">
+
+            <div class="safe-data">
+
+                <span>✓</span>
+
+                <div>
+                    <strong>Data asli tetap aman</strong>
+                    <small>
+                        Perubahan dilakukan pada data kerja.
+                    </small>
+                </div>
+
+            </div>
+
+
+            <div
+                id="tableRowInfo"
+                class="table-row-info"
+            >
+                0 baris
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ACTIVITY
+    ================================================== -->
+
+    <section class="card activity-card">
+
+        <div class="section-title">
+
+            <div>
+
+                <span class="section-kicker">
+                    ACTIVITY
+                </span>
+
+                <h2>
+                    Aktivitas terbaru
+                </h2>
+
+                <p>
+                    Catatan proses yang dilakukan pada workspace.
+                </p>
+
+            </div>
+
+            <span
+                id="activityCount"
+                class="activity-count"
+            >
+                0 aktivitas
+            </span>
+
+        </div>
+
+
+        <div
+            id="activityList"
+            class="activity-list"
+        >
+
+            <div class="activity-empty">
+
+                <div class="activity-empty-icon">
+                    ◷
+                </div>
+
+                <div>
+                    <strong>
+                        Belum ada aktivitas
+                    </strong>
+
+                    <span>
+                        Aktivitas akan muncul setelah kamu mulai bekerja.
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer class="main-footer">
+
+        <span>AI Admin Assistant</span>
+        <span>•</span>
+        <span>Private Workspace</span>
+        <span>•</span>
+        <span>Bahasa Indonesia</span>
+
+    </footer>
+
+</main>
+```
+
+</div>
+
+<!-- =====================================================
+     LIBRARIES
+===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
