@@ -98,6 +98,7 @@ function cekSession(req) {
         }
 
         return session;
+
     } catch (error) {
         return null;
     }
@@ -109,7 +110,11 @@ function cekSession(req) {
 // =====================================================
 
 app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, "index.html"));
+
+    res.sendFile(
+        path.join(__dirname, "index.html")
+    );
+
 });
 
 
@@ -123,18 +128,22 @@ app.post("/api/login", function (req, res) {
     const password = req.body.password;
 
     if (!username || !password) {
+
         return res.status(400).json({
             error: "Username dan password wajib diisi."
         });
+
     }
 
     if (
         username !== process.env.ADMIN_USERNAME ||
         password !== process.env.ADMIN_PASSWORD
     ) {
+
         return res.status(401).json({
             error: "Username atau password salah."
         });
+
     }
 
     const sessionToken = buatSession(username);
@@ -158,6 +167,7 @@ app.post("/api/login", function (req, res) {
         success: true,
         username: username
     });
+
 });
 
 
@@ -170,15 +180,18 @@ app.get("/api/check-login", function (req, res) {
     const session = cekSession(req);
 
     if (!session) {
+
         return res.json({
             loggedIn: false
         });
+
     }
 
     res.json({
         loggedIn: true,
         username: session.username
     });
+
 });
 
 
@@ -196,6 +209,7 @@ app.post("/api/logout", function (req, res) {
     res.json({
         success: true
     });
+
 });
 
 
@@ -208,14 +222,17 @@ function wajibLogin(req, res, next) {
     const session = cekSession(req);
 
     if (!session) {
+
         return res.status(401).json({
             error: "Anda harus login terlebih dahulu."
         });
+
     }
 
     req.username = session.username;
 
     next();
+
 }
 
 
@@ -233,16 +250,20 @@ app.post(
             const prompt = req.body.prompt;
 
             if (!prompt) {
+
                 return res.status(400).json({
                     error: "Prompt tidak boleh kosong."
                 });
+
             }
 
             if (!process.env.DEEPSEEK_API_KEY) {
+
                 return res.status(500).json({
                     error:
                         "DEEPSEEK_API_KEY belum diatur di Environment Variables."
                 });
+
             }
 
             const response = await fetch(
@@ -252,6 +273,7 @@ app.post(
 
                     headers: {
                         "Content-Type": "application/json",
+
                         "Authorization":
                             "Bearer " +
                             process.env.DEEPSEEK_API_KEY
@@ -305,6 +327,7 @@ ATURAN PENTING:
                         ],
 
                         temperature: 0.2
+
                     })
                 }
             );
@@ -312,11 +335,13 @@ ATURAN PENTING:
             const data = await response.json();
 
             if (!response.ok) {
+
                 return res.status(response.status).json({
                     error:
                         data.error?.message ||
                         "Gagal menghubungi DeepSeek."
                 });
+
             }
 
             const hasil =
@@ -342,7 +367,9 @@ ATURAN PENTING:
                 error:
                     "Terjadi kesalahan pada server AI."
             });
+
         }
+
     }
 );
 
@@ -373,4 +400,5 @@ if (require.main === module) {
 
         }
     );
+
 }
