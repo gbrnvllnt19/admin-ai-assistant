@@ -1349,7 +1349,6 @@ padding: 30px 25px;
 width: 215px;
 }
 
-```
 .main {
     width: calc(100% - 215px);
     margin-left: 215px;
