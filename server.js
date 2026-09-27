@@ -1,13 +1,20 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const crypto = require("crypto");
+const path = require("path");
 
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
-app.use(express.static(__dirname));
+
+
+// =====================================================
+// STATIC FILE
+// =====================================================
+
+app.use(express.static(path.join(__dirname)));
 
 
 // =====================================================
@@ -18,7 +25,10 @@ const SESSION_MAX_AGE = 24 * 60 * 60 * 1000;
 
 function buatSignature(data) {
     return crypto
-        .createHmac("sha256", process.env.SESSION_SECRET || "secret-default")
+        .createHmac(
+            "sha256",
+            process.env.SESSION_SECRET || "secret-default"
+        )
         .update(data)
         .digest("hex");
 }
@@ -99,7 +109,7 @@ function cekSession(req) {
 // =====================================================
 
 app.get("/", function (req, res) {
-    res.sendFile(__dirname + "/index.html");
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
 
